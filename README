@@ -1,0 +1,313 @@
+//Zadatak 1 - Strukture podataka
+
+//main datoteka zadatka
+
+#include<iostream>
+#include "lista_polje.h"
+//#include "lista_pokazivac.h"
+
+using namespace std;
+
+int main(){
+int izbor;
+do{
+    cout<<endl;
+    cout<<"\tIzbornik"<<endl;
+    cout<<"-------------------"<<endl;
+    cout<<"1 Unos  pacijenata"<<endl;
+    cout<<"2 Ispis pacijenata prema maticnom broju"<<endl;
+    cout<<"3 Ispis pacijenata mladjih od 18 godina"<<endl;
+    cout<<"4 Brisanje pacijenta"<<endl;
+    cout<<"5 Izlaz"<<endl;
+    cout<<"-------------------------------------------"<<endl;
+    cout<<"Vas izbor: ";
+    cin>>izbor;
+    cout<<endl<<endl;
+    
+    switch(izbor){
+                  case 1:unos();break;
+                  case 2:ispis_svi();break;
+                  case 3:ispis_mladji();break;
+                  case 4:brisanje();break;
+                  case 5:break;
+                  default:cout<<"Krivi izbor!\n\n";
+                  } 
+}while(izbor!=5);//do   
+return 0;
+}
+
+------------------------------------------------------
+//lista_pokazivac.h
+
+#include<iostream>
+using namespace std;
+int ukupno=0;
+
+struct pacijent{     
+       int mbr;
+       int god; 
+       char preime[40];
+       pacijent *sljedeci;
+       }lista[1000];
+
+
+
+int unos(){
+        pacijent *novi = new pacijent;
+        pacijent *tekuci=lista;
+
+        while(tekuci->sljedeci)
+           tekuci=tekuci->sljedeci;
+     
+        novi->sljedeci = NULL;
+        tekuci->sljedeci = novi;
+       
+        cout<<endl;
+        cout <<"Maticni broj: ";
+        cin >> novi->mbr;
+        cout << "Ime i prezime: ";
+        cin.ignore();
+        cin.getline(novi->preime,40);
+        cout<<"Godine: ";
+        cin>>novi->god;
+        cout<<endl;
+        cout<<"Pacijent unesen."<<endl<<endl;;
+                                 
+        ukupno++;
+     };
+     
+     
+void ispis_svi(){
+
+     if (ukupno==0){                        //provjera postoje li uneseni pacijenti 
+        cout<<"Nema unesenih pacijenata!"<<endl;
+        return;
+     } 
+     for(int i=0;i<1000;i++){
+             
+          pacijent *tekuci=lista->sljedeci;
+             while(tekuci){
+                  if(tekuci->mbr==i){
+                     cout<<endl;              
+                     cout<<"Maticni broj: "<<tekuci->mbr<<endl;
+                     cout<<"Ime i prezime: "<<tekuci->preime<<endl;
+                     cout<<"Godine: "<<tekuci->god<<endl;
+                     cout<<endl;   
+             }//if
+                  tekuci=tekuci->sljedeci;       
+               } //while    
+               
+             
+             
+             }//for
+     
+     
+     
+}//ispis
+     
+void ispis_mladji(){
+     int mladi=0;
+
+     if (ukupno==0){                        //provjera postoje li uneseni pacijenti 
+        cout<<"Nema unesenih pacijenata!"<<endl;
+        return;
+     } 
+     
+             
+          pacijent *tekuci=lista->sljedeci;
+             while(tekuci){
+                  if(tekuci->god<18){
+                     cout<<endl;              
+                     cout<<"Maticni broj: "<<tekuci->mbr<<endl;
+                     cout<<"Ime i prezime: "<<tekuci->preime<<endl;
+                     cout<<"Godine: "<<tekuci->god<<endl;
+                     cout<<endl;
+                     mladi++;  
+             }//if
+                  tekuci=tekuci->sljedeci;       
+               } //while    
+               
+             
+             
+            
+     if (!mladi)
+        cout<<"Nema pacijenata mladjih od 18 godina!"<<endl;
+     else cout<<"Broj pacijenata mladjih od 18 godina je "<<mladi;
+     cout<<endl<<endl;      
+     return;  
+     
+     
+}//ispis_mladji
+
+ 
+
+
+
+void brisanje(){
+     int sifra;
+     
+     if (ukupno==0){                        //provjera postoje li uneseni pacijenti 
+        cout<<"Nema unesenih pacijenata!"<<endl;
+        return;
+     } 
+           
+     cout<<"Unesite maticni broj pacijenta kojeg zelite obrisati: ";
+     cin>>sifra;
+   
+     pacijent *tekuci=lista->sljedeci, *prethodni=lista;
+   
+     while(tekuci){
+          if(tekuci->mbr==sifra){
+                 prethodni->sljedeci=tekuci->sljedeci; 
+                 delete tekuci;
+                 cout<<"\nPacijent pod sifrom "<<sifra<<" obrisan!"<<endl;
+                 ukupno--;
+                 return;
+                 
+                 }//if 
+     
+        prethodni=tekuci;
+        tekuci=tekuci->sljedeci;             
+    }//while
+    
+    tekuci=lista->sljedeci;
+    
+
+     }//brisanje
+
+
+-----------------------------------------------------------
+
+//lista_polje.h
+
+
+#include<iostream>
+
+using namespace std;
+
+int ukupno=0;           //inicijalizacija brojača pacijenata
+
+struct pacijent{
+       int mbr;
+       int god;
+       char preime[40];             //ATP pacijent
+       }lista[100];
+       
+       
+int unos(){                //unošenje pacijenata
+    int sif;
+    bool provjera = false;
+    cout<<"Maticni broj: ";
+    
+    cin>>sif;
+    while(provjera==false){
+    provjera=true;
+    for(int i=0;i<ukupno;i++)
+            if(sif==lista[i].mbr){
+                               cout<<"\n\nPacijent s unesenom maticnim brojem vec postoji!"<<endl;
+                               cout<<"Unesite maticni broj ponovo: ";
+                               cin>>sif;
+                               cout<<endl;
+                               provjera=false;  
+                                  }
+                                        
+                                  }//while
+    lista[ukupno].mbr=sif;
+    
+    cout<<"Ime i prezime: ";
+    cin.ignore();
+    cin.getline(lista[ukupno].preime,40);    
+    cout<<"Godine: ";
+    cin>>lista[ukupno].god;
+    ukupno++;               //pribrojavanje pacijenata
+    cout<<endl;
+    cout<<"Pacijent unesen";
+    cout<<endl<<endl;
+    return 1;
+    };
+        
+void ispis_svi(){               //ispis svih pacijenata po matičnom broju
+
+     pacijent pom;                         //pomoćni ATP pacijent kojega ćemo koristiti kod sortiranja
+
+     if (ukupno==0){                        //provjera postoje li uneseni pacijenti 
+        cout<<"Nema unesenih pacijenata!"<<endl;
+        return;
+     }  
+    
+     for(int i=ukupno-1;i>0;i--){                //bubble sort pacijenata
+             for(int j=0;j<i;j++)
+                     if(lista[j].mbr>lista[j+1].mbr){
+                     pom=lista[j];
+                     lista[j]=lista[j+1];
+                     lista[j+1]=pom;                                     
+                     }
+             }//for
+
+
+     for (int i=0;i<ukupno;i++){            //ispis svih pacijenata
+                   cout<<"Maticni broj: "<<lista[i].mbr<<endl;         
+                   cout<<"Ime i prezime: "<<lista[i].preime<<endl;                 
+                   cout<<"Godine: "<<lista[i].god<<endl;
+                   cout<<endl;
+                   }
+     cout<<endl<<endl;
+     return;                        
+     }//ispis_svi
+     
+      
+int ispis_mladji(){                  //ispis pacijenata mlađih od 18 godina
+     int mladi=0;    
+     if (ukupno==0){                                //provjera postoje li uneseni pacijenti       
+        cout<<"Nema unesenih pacijenata!"<<endl;
+        return 0;
+        }
+     
+     for (int i=0;i<ukupno;i++){
+         if(lista[i].god<18){                    //pretraživanje pacijenata mlađih od 18 godina                    
+                    cout<<"Maticni broj: "<<lista[i].mbr<<endl;
+                    cout<<"Ime i prezime: "<<lista[i].preime<<endl;                   
+                    cout<<"Godine: "<<lista[i].god<<endl;
+                    cout<<endl;
+                    mladi++;     
+                    }
+     }//for
+     
+     if (!mladi)
+        cout<<"Nema pacijenata mladjih od 18 godina!"<<endl;
+     else cout<<"Broj pacijenata mladjih od 18 godina je "<<mladi;
+     cout<<endl<<endl;      
+     return 1;     
+     }//ispis_mladji
+     
+     
+     
+     
+     
+int brisanje(){            //brisanje pacijenata po sifri
+    int sifra;
+    
+     if (ukupno==0){
+        cout<<"Nema unesenih pacijenata!"<<endl;
+        return 0;
+        }
+     
+     cout<<"Unesite maticni broj pacijenta kojeg zelite obrisati: ";
+     cin>>sifra;
+     bool potvrda=false;          
+     for (int i=0;i<ukupno;i++)
+         if (sifra==lista[i].mbr){
+                                     for(int j=i;j<ukupno;j++)
+                                     lista[j] = lista[j+1];
+                                     potvrda=true;
+            }
+     if(potvrda==true){      
+     cout<<"\nPacijent pod sifrom "<<sifra<<" obrisan!"<<endl;
+     ukupno--;
+     }
+     else
+     cout<<"\nNe postoji pacijent s tim maticnim brojem!";
+     
+     cout<<endl<<endl;
+     return 1;       
+     }//brisanje
